@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { TimezonePage } from '../pages/timezone.page';
 import { TimezoneVerifications } from '../verifications/timezone.verifications';
-import { loadTimezoneTestData, loadDeleteTimezoneTestData } from '../utils/csv-loader';
+import { loadCsvTestData } from '../utils/csv-loader';
 
 test.describe('Timezone App', () => {
     let tzPage: TimezonePage;
@@ -22,7 +22,7 @@ test.describe('Timezone App', () => {
     });
 
     // Parameterized tests using CSV data
-    const timezoneTestCases = loadTimezoneTestData();
+    const timezoneTestCases = loadCsvTestData('../resources/timezones.csv');
     
     timezoneTestCases.forEach(({ label, zone }) => {
         test(`adds a new timezone record: "${label}" - "${zone}"`, async () => {
@@ -53,16 +53,16 @@ test.describe('Timezone App', () => {
     });
 
     // Parameterized delete tests using CSV data
-    const deleteTestCases = loadDeleteTimezoneTestData();
+    const deleteTestCases = loadCsvTestData('../resources/delete-timezones.csv');
     
     deleteTestCases.forEach(({ label, zone }) => {
         test(`deletes a custom timezone record: "${label}" - "${zone}" and keeps the local row`, async () => {
             await tzPage.addTimezone(label, zone);
             await tzPage.deleteRowByLabel(label);
 
-            await verify.assertRowCount(label, 0);
-            await verify.assertRowExists('Local');
-            await expect(tzPage.getDeleteButtonByLabel('Local')).toBeDisabled();
+            await verify.assertRowCount(label, 0); // Deleted row should be gone
+            await verify.assertRowExists('Local');  // Local row should still exist
+            await expect(tzPage.getDeleteButtonByLabel('Local')).toBeDisabled(); // Local row cannot be deleted
         });
     });
 });
