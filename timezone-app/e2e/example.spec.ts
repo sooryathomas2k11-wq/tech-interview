@@ -1,9 +1,8 @@
 import { test, expect } from '@playwright/test';
-import{TimezonePage} from './pages/timezone.page'
 
-// test('has title', async ({ page }) => {
-//   await page.goto('localhost:3000');
-//
-//   // Expect a title "to contain" a substring.
-//   await expect(page).toHaveTitle(/Time Keeper/);
-// });
+test('has title', async ({ page }) => {
+  await page.goto('localhost:3000');
+
+  // Expect a title "to contain" a substring.
+  await expect(page).toHaveTitle(/Time Keeper/);
+});
