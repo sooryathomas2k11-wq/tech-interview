@@ -19,6 +19,21 @@ const getBrowserTime = (timezone?: string) => {
   return formattedTime;
 };
 
+const getTimezoneDate = (timezone?: string) => {
+  const now = new Date();
+  const formatted = new Intl.DateTimeFormat("sv-SE", {
+    timeZone: timezone,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+  }).format(now);
+
+  return new Date(formatted);
+};
+
 const timezoneOptions = [
   { label: "Eastern Standard Time", value: "America/New_York" },
   { label: "Central Standard Time", value: "America/Chicago" },
@@ -99,18 +114,13 @@ const Form = ({ onSubmit }: TimezoneFormProps) => {
         >
           Location
         </label>
-        <select
-          id="timezone"
+        <input
+          type="text"
           name="timezone"
-          className="mt-2 block w-full rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6"
-        >
-          <option value="">Select a timezone</option>
-          {timezoneOptions.map((tz, index) => (
-            <option key={index} value={tz.value}>
-              {tz.label}
-            </option>
-          ))}
-        </select>
+          id="timezone"
+          className="mt-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+          placeholder="e.g., America/New_York, Europe/Berlin"
+        />
       </div>
 
       <button
@@ -146,14 +156,8 @@ export default function Home() {
   }, []);
 
   const sortedZones = useMemo(() => {
-    return timezones.sort((a, b) => {
-      if (a.label < b.label) {
-        return -1;
-      }
-      if (a.label > b.label) {
-        return 1;
-      }
-      return 0;
+    return [...timezones].sort((a, b) => {
+      return getTimezoneDate(a.zone).getTime() - getTimezoneDate(b.zone).getTime();
     });
   }, [timezones]);
 
@@ -285,6 +289,8 @@ export default function Home() {
                 >
                   <button
                     type="button"
+                    disabled={tz.isLocal}
+                    aria-disabled={tz.isLocal}
                     onClick={(e) => handleDelete(e, tz.label)}
                     className="inline-flex items-center rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-white"
                   >
