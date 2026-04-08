@@ -1,46 +1,45 @@
 name: CI
 on:
   push:
-    branches: [ main, develop]
+    branches: [ main, develop ]
   pull_request:
-    branches: [ main, de ]
+    branches: [ main, develop ]
 
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
-    
-    # This clears the Node.js 20 deprecation warning
-    env:
-      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+    defaults:
+      run:
+        working-directory: timezone-app
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '24' # Explicitly using Node 24
+          node-version: '20'
           cache: 'npm'
-          cache-dependency-path: timezone-app/package.json
+          cache-dependency-path: timezone-app/package-lock.json
 
       - name: Install dependencies
-        run: npm install
-        working-directory: timezone-app
+        run: npm ci
 
-      # This fixes the "Headless Shell" / Browser missing error
+      - name: Build Application
+        # This creates the .next folder required for 'npm run start'
+        run: npm run build
+
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
-        working-directory: timezone-app
 
-      # Starts the app, waits for it to be ready, then runs tests
       - name: Run Playwright tests
-        run: |
-          npm run start & 
-          npx playwright wait-on http://localhost:3000 --timeout 60000
-          npx playwright test
-        working-directory: timezone-app
+        # Playwright will automatically handle starting the server
+        # based on your playwright.config.ts webServer settings.
+        run: npx playwright test
+        env:
+          CI: true
 
-      # Fixes the "No files found" warning for reports
       - name: Upload Playwright Report
         uses: actions/upload-artifact@v4
         if: always()
