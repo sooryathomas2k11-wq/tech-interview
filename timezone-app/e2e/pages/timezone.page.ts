@@ -7,8 +7,7 @@ export class TimezonePage {
   readonly locationSelect: Locator;
   readonly saveButton: Locator;
   readonly tableRows: Locator;
-  readonly timezoneCells: Locator;
-  readonly rowTimeCells: Locator;
+
 
   constructor(page: Page) {
     this.page = page;
@@ -17,8 +16,7 @@ export class TimezonePage {
     this.locationSelect = page.locator('input#timezone');
     this.saveButton = page.getByRole('button', { name: 'Save' });
     this.tableRows = page.locator('tbody tr');
-    this.timezoneCells = this.tableRows.locator('td:nth-child(2)');
-    this.rowTimeCells = this.tableRows.locator('td:nth-child(3)');
+
   }
 
   async navigate() {
@@ -48,13 +46,24 @@ export class TimezonePage {
     return this.getRowByLabel(label).locator('td').nth(1);
   }
 
-  async getAllTimezones() {
-    return await this.timezoneCells.allInnerTexts();
+
+  getTimezoneCellByLabel(label: string) {
+    return this.page.getByRole('row', { name: label }).getByRole('cell').nth(1);
   }
 
-  async getAllRowTimes() {
-    return await this.rowTimeCells.allInnerTexts();
+  getTimeCellByLabel(label: string) {
+    return this.page.getByRole('row', { name: label }).getByRole('cell').nth(2);
   }
+
+  async getAllTimezones() {
+  // Finds every row, then within each row, finds the cell in the 2nd position (Timezone Name)
+  return await this.page.getByRole('row').locator('td').nth(1).allInnerTexts();
+}
+
+  async getAllRowTimes() {
+  // Finds every row, then within each row, finds the cell in the 3rd position (Current Time)
+  return await this.page.getByRole('row').locator('td').nth(2).allInnerTexts();
+}
 
   // Helper to get row data for verification
   async getRowTexts() {
