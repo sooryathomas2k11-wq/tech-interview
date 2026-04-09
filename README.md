@@ -13,7 +13,7 @@ The suite utilizes a scalable **Page Object Model (POM)** and **Data-Driven** de
 ### ⚙️ CI/CD: GitHub Actions
 A custom [GitHub Actions pipeline](https://github.com/sooryathomas2k11-wq/tech-interview/actions) automates the testing lifecycle:
 * **Combined Workflow:** Handles application builds, Playwright setup, and parallelized execution.
-* **Automated Diagnostics:** Captures and uploads **Playwright HTML Reports** as artifacts, including screenshots and videos for every run.
+* **Automated Diagnostics:** Captures and uploads **Playwright HTML Reports** as artifacts.
 
 ### 🛠️ Application Logic Enhancements
 To align with product specifications, I directly modified the application code:
