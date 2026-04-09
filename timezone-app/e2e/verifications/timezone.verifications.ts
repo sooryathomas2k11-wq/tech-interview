@@ -1,34 +1,33 @@
-import { expect, Locator } from '@playwright/test';
+import { expect } from '@playwright/test';
+import { TimezonePage } from '../pages/timezone.page';
 
 export class TimezoneVerifications {
-    constructor(private readonly tableRows: Locator) {}
+    // We pass the page object here to reuse its locators
+    constructor(private readonly tzPage: TimezonePage) {}
 
     async assertRowExists(label: string) {
-        await expect(this.tableRows.filter({ hasText: label })).toBeVisible();
+        await expect(this.tzPage.getRowByLabel(label)).toBeVisible();
     }
 
     async assertRowCount(label: string, count: number) {
-        await expect(this.tableRows.filter({ hasText: label })).toHaveCount(count);
+        await expect(this.tzPage.tableRows.filter({ hasText: label })).toHaveCount(count);
     }
 
     async assertDeleteDisabled(label: string) {
-        const row = this.tableRows.filter({ hasText: label });
-        await expect(row.getByRole('button', { name: 'Delete' })).toBeDisabled();
+        const deleteBtn = this.tzPage.getDeleteButtonByLabel(label);
+        await expect(deleteBtn).toBeDisabled();
     }
 
-async verifyTableIsSortedByTime() {
-    // 1. Using :nth-child(3) to get the 'Current Time' column from all rows
-    const timeStrings = await this.tableRows.locator('td:nth-child(3)').allInnerTexts();
-   
-    // 2. Convert the array of strings into timestamps for comparison
+   async verifyTableIsSortedByTime() {
+    const timeStrings = await this.tzPage.getAllTimeStrings();
+    console.log('--- DEBUG: Raw Time Strings ---');
+    console.log(timeStrings);
+    
+    // 2. Process the data
     const actualTimes = timeStrings.map(t => Date.parse(`2026-04-08 ${t}`));
-
-    // 3. Create a copy and sort it numerically to determine the correct order
     const expectedSorted = [...actualTimes].sort((a, b) => a - b);
 
-    // 4. Assert that the UI matches the sorted data
-    // This will fail with a clear diff if the table isn't sorted
+    // 3. Assert
     await expect(actualTimes, 'Table rows are not sorted by time').toEqual(expectedSorted);
 }
 }
-

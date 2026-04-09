@@ -59,4 +59,8 @@ async addTimezone(label: string, locationValue: string) {
   async getRowTexts() {
     return await this.tableRows.allInnerTexts();
   }
+  async getAllTimeStrings(){
+
+    return await this.tableRows.locator('td:nth-child(3)').allInnerTexts();
+  }
 }

@@ -7,9 +7,9 @@ test.describe('Timezone App', () => {
     let tzPage: TimezonePage;
     let verify: TimezoneVerifications;
 
-    test.beforeEach(async ({ page }) => {
+ test.beforeEach(async ({ page }) => {
         tzPage = new TimezonePage(page);
-        verify = new TimezoneVerifications(tzPage.tableRows);
+        verify = new TimezoneVerifications(tzPage); 
         await tzPage.navigate();
     });
 
@@ -49,7 +49,7 @@ test('table remains sorted by time after each addition', async ({ page }) => {
         await tzPage.addTimezone(item.label, item.zone);             
     }
     // Step 2: Verification (Check the table is sorted by time)
-     verify.verifyTableIsSortedByTime();
+     await verify.verifyTableIsSortedByTime();
 });
 
     // Parameterized delete tests using CSV data
