@@ -55,16 +55,6 @@ async addTimezone(label: string, locationValue: string) {
     return this.page.getByRole('row', { name: label }).getByRole('cell').nth(2);
   }
 
-  async getAllTimezones() {
-  // Finds every row, then within each row, finds the cell in the 2nd position (Timezone Name)
-  return await this.page.getByRole('row').locator('td').nth(1).allInnerTexts();
-}
-
-  async getAllRowTimes() {
-  // Finds every row, then within each row, finds the cell in the 3rd position (Current Time)
-  return await this.page.getByRole('row').locator('td').nth(2).allInnerTexts();
-}
-
   // Helper to get row data for verification
   async getRowTexts() {
     return await this.tableRows.allInnerTexts();

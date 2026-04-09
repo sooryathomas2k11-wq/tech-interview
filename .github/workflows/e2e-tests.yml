@@ -1,13 +1,19 @@
-name: E2E Tests
+name: E2E tests
+
 on:
-  workflow_dispatch:
   push:
-    branches: [main, develop]
+    branches: [ main, develop ]
     paths:
       - 'timezone-app/**'
+  pull_request:
+    branches: [ main, develop ]
+    paths:
+      - 'timezone-app/**'
+  workflow_dispatch: # Allows manual trigger from the Actions tab
 
 jobs:
-  e2e-tests:
+  build-and-test:
+    name: Build and Run E2E Tests
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -28,20 +34,21 @@ jobs:
         run: npm ci
 
       - name: Build Application
+        # Required for Playwright to run against a production-like build
         run: npm run build
 
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
 
-      - name: Run e2e tests
+      - name: Run Playwright tests
         run: npx playwright test
         env:
           CI: true
 
-      - name: Upload playwright report
-        if: always()
+      - name: Upload Playwright Report
         uses: actions/upload-artifact@v4
+        if: always()
         with:
-          name: e2e-playwright-report
+          name: playwright-report
           path: timezone-app/playwright-report/
           retention-days: 30

@@ -46,10 +46,10 @@ test('table remains sorted by time after each addition', async ({ page }) => {
     
     for (const item of sortingTestCases) {
         // Step 1: Action (Add the timezone)
-        await tzPage.addTimezone(item.label, item.zone);
-        // Step 2: Verification (Check the table is sorted by time)
-         verify.verifyTableIsSortedByTime();
+        await tzPage.addTimezone(item.label, item.zone);             
     }
+    // Step 2: Verification (Check the table is sorted by time)
+     verify.verifyTableIsSortedByTime();
 });
 
     // Parameterized delete tests using CSV data

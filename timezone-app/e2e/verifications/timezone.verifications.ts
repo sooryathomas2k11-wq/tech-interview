@@ -17,20 +17,18 @@ export class TimezoneVerifications {
     }
 
 async verifyTableIsSortedByTime() {
-    // 1. Get the raw time strings using your existing row logic
-    // nth(2) corresponds to the 3rd column (Current Time)
-    const timeStrings = await this.tableRows.locator('td').nth(2).allInnerTexts();
-
-    // 2. Convert "10:00 AM" strings into comparable numbers
-    // We use a dummy date so JS can calculate the difference correctly
+    // 1. Using :nth-child(3) to get the 'Current Time' column from all rows
+    const timeStrings = await this.tableRows.locator('td:nth-child(3)').allInnerTexts();
+   
+    // 2. Convert the array of strings into timestamps for comparison
     const actualTimes = timeStrings.map(t => Date.parse(`2026-04-08 ${t}`));
 
-    // 3. Create the expected order by sorting the actual data
+    // 3. Create a copy and sort it numerically to determine the correct order
     const expectedSorted = [...actualTimes].sort((a, b) => a - b);
 
-    // 4. Assert
-    return expect(actualTimes, 'Table should be sorted from earliest to latest time')
-           .toEqual(expectedSorted);
+    // 4. Assert that the UI matches the sorted data
+    // This will fail with a clear diff if the table isn't sorted
+    await expect(actualTimes, 'Table rows are not sorted by time').toEqual(expectedSorted);
 }
 }
 
