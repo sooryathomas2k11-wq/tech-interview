@@ -1,2 +1,5 @@
 label,zone
-Eastern Standard Time,America/New_York
+Mountain HQ,America/Denver
+Central HQ,America/Chicago
+Eastern HQ,America/New_York
+Pacific HQ,America/Los_Angeles
