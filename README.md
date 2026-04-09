@@ -20,4 +20,4 @@ To align with product specifications, I directly modified the application code:
 * **UI Hardening:** The **Delete button is programmatically disabled** for the "You" record to maintain data integrity.
 
 ### 🐞 Manual QA & Defect Tracking
-A deep-dive manual audit resulted in **[8 Formal Defects](https://github.com/sooryathomas2k11-wq/tech-interview/issues)**. Each issue includes reproduction steps, severity levels, and "Expected vs. Actual" analysis.
+A deep-dive manual audit resulted in **[8 Formal Defects/Enhancements](https://github.com/sooryathomas2k11-wq/tech-interview/issues)**. Each issue includes reproduction steps, severity levels, and "Expected vs. Actual" analysis.
