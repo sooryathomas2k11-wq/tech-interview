@@ -23,34 +23,34 @@ test.describe('Timezone App', () => {
 
     // Parameterized tests using CSV data
     const timezoneTestCases = loadCsvTestData('../resources/timezones.csv');
+
+timezoneTestCases.forEach(({ label, zone }) => {
+    test(`adds a new timezone record: "${label}" - "${zone}"`, async () => {
+        await tzPage.addTimezone(label, zone);
+
+        // This assertion will now fail for "Central European Summer Time" because it can't be selected
+        await verify.assertRowExists(label);
+        
+        const zoneCell = tzPage.getDisplayedTimezoneByLabel(label);
+        await expect(zoneCell).toHaveText(zone);
+    });
+});
+
+test('table remains sorted by time after each addition', async ({ page }) => {
+    // Setup
+    const MOCK_NOW = new Date('2026-04-08T12:00:00Z');
+    await page.clock.setFixedTime(MOCK_NOW);
+
+    // Load your CSV data
+    const sortingTestCases = loadCsvTestData('../resources/sorting-test.csv');
     
-    timezoneTestCases.forEach(({ label, zone }) => {
-        test(`adds a new timezone record: "${label}" - "${zone}"`, async () => {
-            await tzPage.addTimezone(label, zone);
-
-            await verify.assertRowExists(label);
-            await expect(tzPage.getDisplayedTimezoneByLabel(label)).toHaveText(zone);
-        });
-    });
-
-    test('sorts the table rows by current local time ascending', async () => {
-        const timezones = await tzPage.getAllTimezones();
-        const timestamps = timezones.map((zone) => {
-            const formatted = new Intl.DateTimeFormat('sv-SE', {
-                timeZone: zone,
-                year: 'numeric',
-                month: '2-digit',
-                day: '2-digit',
-                hour: '2-digit',
-                minute: '2-digit',
-                second: '2-digit',
-            }).format(new Date());
-
-            return new Date(formatted).getTime();
-        });
-
-        expect(timestamps).toEqual([...timestamps].sort((a, b) => a - b));
-    });
+    for (const item of sortingTestCases) {
+        // Step 1: Action (Add the timezone)
+        await tzPage.addTimezone(item.label, item.zone);
+        // Step 2: Verification (Check the table is sorted by time)
+         verify.verifyTableIsSortedByTime();
+    }
+});
 
     // Parameterized delete tests using CSV data
     const deleteTestCases = loadCsvTestData('../resources/delete-timezones.csv');

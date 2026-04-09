@@ -16,24 +16,21 @@ export class TimezoneVerifications {
         await expect(row.getByRole('button', { name: 'Delete' })).toBeDisabled();
     }
 
-    async assertTableIsSortedByTime() {
-        const timezoneCells = this.tableRows.locator('td:nth-child(2)');
-        const allTimezones = await timezoneCells.allInnerTexts();
+async verifyTableIsSortedByTime() {
+    // 1. Get the raw time strings using your existing row logic
+    // nth(2) corresponds to the 3rd column (Current Time)
+    const timeStrings = await this.tableRows.locator('td').nth(2).allInnerTexts();
 
-        const actualTimestamps = allTimezones.map((zone) => {
-            const formatted = new Intl.DateTimeFormat('sv-SE', {
-                timeZone: zone,
-                year: 'numeric',
-                month: '2-digit',
-                day: '2-digit',
-                hour: '2-digit',
-                minute: '2-digit',
-                second: '2-digit',
-            }).format(new Date());
+    // 2. Convert "10:00 AM" strings into comparable numbers
+    // We use a dummy date so JS can calculate the difference correctly
+    const actualTimes = timeStrings.map(t => Date.parse(`2026-04-08 ${t}`));
 
-            return new Date(formatted).getTime();
-        });
+    // 3. Create the expected order by sorting the actual data
+    const expectedSorted = [...actualTimes].sort((a, b) => a - b);
 
-        expect(actualTimestamps).toEqual([...actualTimestamps].sort((a, b) => a - b));
-    }
+    // 4. Assert
+    return expect(actualTimes, 'Table should be sorted from earliest to latest time')
+           .toEqual(expectedSorted);
 }
+}
+

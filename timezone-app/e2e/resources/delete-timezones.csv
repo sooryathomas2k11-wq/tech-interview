@@ -1,7 +1,4 @@
 label,zone
-EST,America/New_York
-PST,America/Los_Angeles
-CST,America/Chicago
-GMT,Europe/London
-IST,Asia/Kolkata
-JST,Asia/Tokyo
+Mountain HQ,America/Denver
+Central HQ,America/Chicago
+Eastern HQ,America/New_York

@@ -13,7 +13,7 @@ export class TimezonePage {
     this.page = page;
     this.addButton = page.getByRole('button', { name: 'Add timezone' });
     this.labelInput = page.locator('input[name="label"]');
-    this.locationSelect = page.locator('input#timezone');
+    this.locationSelect = page.locator('select#timezone');
     this.saveButton = page.getByRole('button', { name: 'Save' });
     this.tableRows = page.locator('tbody tr');
 
@@ -23,12 +23,12 @@ export class TimezonePage {
     await this.page.goto('/');
   }
 
-  async addTimezone(label: string, locationValue: string) {
+async addTimezone(label: string, locationValue: string) {
     await this.addButton.click();
-    if (label) await this.labelInput.fill(label);
-    if (locationValue) await this.locationSelect.fill(locationValue);
+    await this.labelInput.fill(label);
+    await this.locationSelect.selectOption(locationValue);
     await this.saveButton.click();
-  }
+}
 
   getRowByLabel(label: string) {
     return this.tableRows.filter({ hasText: label }).first();
